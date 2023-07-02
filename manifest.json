@@ -1,0 +1,30 @@
+{
+  "manifest_version": 3,
+  "name": "DTF.ru Post Navigation",
+  "version": "1.0",
+  "description": "Allows navigation between posts on DTF.ru",
+  "author": "ldifmo@gmail.com",
+  "permissions": [
+    "tabs"
+  ],
+  "action": {
+    "default_popup": "popup.html"
+  },
+  "background": {
+    "service_worker": "background.js"
+  },
+  "content_scripts": [
+    {
+      "css": [
+        "styles.css"
+      ],
+      "js": [
+        "content.js"
+      ],
+      "matches": [
+        "https://dtf.ru/*",
+        "https://new.dtf.ru/*"
+      ]
+    }
+  ]
+}
