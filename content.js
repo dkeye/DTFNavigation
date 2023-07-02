@@ -17,9 +17,6 @@ const oldDtf = {
     scrollToNextPost() {
         let currentPostPosition = this.lookupCurrentPostPosition();
         if (currentPostPosition !== undefined) {
-            if (currentPostPosition === 1) {
-                currentPostPosition = 0
-            }
             let nextPost = document.querySelector(`[data-position="${currentPostPosition + 1}"]`);
             nextPost.scrollIntoView({behavior: "smooth"});
         }
@@ -111,7 +108,7 @@ document.addEventListener("keydown", function (event) {
             site.scrollToPreviousPost();
         } else if (keyCode === "KeyS") {
             site.scrollToNextPost();
-        } else if (keyCode === 'Space') {
+        } else if (keyCode === 'KeyF') {
             event.preventDefault();
             site.likePost()
         }
