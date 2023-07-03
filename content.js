@@ -109,7 +109,6 @@ document.addEventListener("keydown", function (event) {
         } else if (keyCode === "KeyS") {
             site.scrollToNextPost();
         } else if (keyCode === 'KeyF') {
-            event.preventDefault();
             site.likePost()
         }
     }
