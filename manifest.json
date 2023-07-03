@@ -4,6 +4,12 @@
   "version": "1.0",
   "description": "Allows navigation between posts on DTF.ru",
   "author": "ldifmo@gmail.com",
+  "browser_specific_settings": {
+    "gecko": {
+      "id": "{373ec339-2c16-40ef-a767-c4c2cf1b03f8}",
+      "strict_min_version": "42.0"
+    }
+  },
   "action": {
     "default_popup": "popup.html"
   },
