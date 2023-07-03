@@ -96,6 +96,11 @@ const newDtf = {
 
 
 document.addEventListener("keydown", function (event) {
+
+        if (document.activeElement.tagName === "INPUT" || document.activeElement.tagName === "TEXTAREA") {
+            return;
+        }
+
         let site;
         if (window.location.host === "dtf.ru") {
             site = oldDtf
