@@ -4,18 +4,12 @@
   "version": "1.0",
   "description": "Allows navigation between posts on DTF.ru",
   "author": "ldifmo@gmail.com",
-  "permissions": [
-    "tabs"
-  ],
   "action": {
     "default_popup": "popup.html"
   },
   "icons": {
     "32": "icon32.png",
     "128": "icon128.png"
-  },
-  "background": {
-    "service_worker": "background.js"
   },
   "content_scripts": [
     {
