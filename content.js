@@ -50,6 +50,15 @@ const oldDtf = {
             currentPost.querySelector('.bookmark').click()
         }
     },
+
+    openPost() {
+        let currentPostPosition = this.lookupCurrentPostPosition();
+        if (currentPostPosition !== undefined) {
+            let currentPost = document.querySelector(`[data-position="${currentPostPosition}"]`);
+            let url = currentPost.querySelector('a.content-link').href
+            window.open(url, '_blank').focus()
+        }
+    }
 }
 
 const newDtf = {
@@ -124,7 +133,15 @@ const newDtf = {
         if (result) {
             result[0].querySelector('button.bookmark-button')?.click()
         }
-    }
+    },
+
+    openPost() {
+        let result = this.lookupCurrentPost();
+        if (result) {
+            let url = result[0].querySelector('a.content__link').href
+            window.open(url, '_blank').focus()
+        }
+    },
 }
 
 function checkInInput() {
@@ -161,6 +178,9 @@ document.addEventListener("keydown", function (event) {
                 break;
             case 'KeyR':
                 site.bookmarkPost()
+                break;
+            case 'KeyE':
+                site.openPost()
                 break;
         }
     }

@@ -1,5 +1,6 @@
 v1.0.3
-    - now can bookmark post on R
+    - bookmark post on R
+    - open post on E
     - fix bug (prevent when active element is 'content_editable' cause old dtf use fake forms for comments)
 v1.0.2
     - fix bug (prevent when active element is input)
