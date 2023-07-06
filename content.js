@@ -9,6 +9,11 @@ const oldDtf = {
             const post = posts[i];
             const rect = post.getBoundingClientRect();
             if (rect.top >= 0) {
+
+                // don't skip first post
+                if (i === 0 && rect.top >= 75) {
+                    return 0
+                }
                 return i + 1; // data-position
             }
         }
@@ -50,15 +55,28 @@ const newDtf = {
             const post = posts[i];
             const rect = post.getBoundingClientRect();
             if (rect.top >= 0) {
-                return post; // post object
+
+                // don't skip first post
+                if (i === 0 && rect.top >= 75) {
+                    return [post, true]
+                }
+                return [post, false]; // post object
             }
         }
     },
 
     scrollToNextPost() {
-        const currentPost = this.lookupCurrentPost();
-        if (currentPost) {
-            let nextPost = currentPost.nextElementSibling;
+        const result = this.lookupCurrentPost();
+        if (result) {
+            let [current, isFirst] = result;
+            let nextPost;
+
+            if (isFirst === true) {
+                nextPost = current
+            } else {
+                nextPost = current.nextElementSibling;
+            }
+
             while (nextPost) {
                 if (nextPost.classList.contains("content") && nextPost.classList.contains("content--short")) {
                     nextPost.scrollIntoView({behavior: "smooth"});
@@ -72,9 +90,9 @@ const newDtf = {
 
 
     scrollToPreviousPost() {
-        const currentPost = this.lookupCurrentPost();
-        if (currentPost) {
-            let previousPost = currentPost.previousElementSibling;
+        const result = this.lookupCurrentPost();
+        if (result) {
+            let previousPost = result[0].previousElementSibling;
             while (previousPost) {
                 if (previousPost.classList.contains("content") && previousPost.classList.contains("content--short")) {
                     previousPost.scrollIntoView({behavior: "smooth"});
@@ -94,10 +112,17 @@ const newDtf = {
     }
 }
 
+function checkInInput() {
+    return (
+        document.activeElement.tagName === "INPUT" ||
+        document.activeElement.tagName === "TEXTAREA" ||
+        document.activeElement.classList.contains('content_editable')
+    )
+}
 
 document.addEventListener("keydown", function (event) {
 
-        if (document.activeElement.tagName === "INPUT" || document.activeElement.tagName === "TEXTAREA") {
+        if (checkInInput()) {
             return;
         }
 
