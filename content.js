@@ -41,7 +41,15 @@ const oldDtf = {
             let currentPost = document.querySelector(`[data-position="${currentPostPosition}"]`);
             currentPost.querySelector('.like-button').click()
         }
-    }
+    },
+
+    bookmarkPost() {
+        let currentPostPosition = this.lookupCurrentPostPosition();
+        if (currentPostPosition !== undefined) {
+            let currentPost = document.querySelector(`[data-position="${currentPostPosition}"]`);
+            currentPost.querySelector('.bookmark').click()
+        }
+    },
 }
 
 const newDtf = {
@@ -105,9 +113,16 @@ const newDtf = {
     },
 
     likePost() {
-        let currentPost = this.lookupCurrentPost();
-        if (currentPost !== undefined) {
-            currentPost.querySelector('button.like')?.click()
+        let result = this.lookupCurrentPost();
+        if (result) {
+            result[0].querySelector('button.like')?.click()
+        }
+    },
+
+    bookmarkPost() {
+        let result = this.lookupCurrentPost();
+        if (result) {
+            result[0].querySelector('button.bookmark-button')?.click()
         }
     }
 }
@@ -134,12 +149,19 @@ document.addEventListener("keydown", function (event) {
         }
 
         const keyCode = event.code;
-        if (keyCode === "KeyW") {
-            site.scrollToPreviousPost();
-        } else if (keyCode === "KeyS") {
-            site.scrollToNextPost();
-        } else if (keyCode === 'KeyF') {
-            site.likePost()
+        switch (keyCode) {
+            case "KeyW":
+                site.scrollToPreviousPost()
+                break;
+            case "KeyS":
+                site.scrollToNextPost()
+                break;
+            case 'KeyF':
+                site.likePost()
+                break;
+            case 'KeyR':
+                site.bookmarkPost()
+                break;
         }
     }
 )
