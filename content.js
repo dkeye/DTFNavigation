@@ -1,154 +1,161 @@
 const oldDtf = {
-    lookupCurrentPostPosition() {
-        const posts = document.querySelectorAll(".feed__item:not(.hidden)");
+    loadPosts() {
+        const feed_chunks = document.querySelectorAll(".feed__chunk");
+        const posts = Array.from(feed_chunks)
+            .flatMap(node => Array.from(node.children))
+            .filter(post => post.tagName === 'DIV' && post.hasAttribute('data-gtm'));
         if (posts.length === 0) {
             return
         }
+        return posts
+    },
 
+    lookupCurrentPosition(posts) {
         for (let i = 0; i < posts.length; i++) {
-            const post = posts[i];
-            const rect = post.getBoundingClientRect();
+            let post = posts[i];
+            let rect = post.getBoundingClientRect();
             if (rect.top >= 0) {
-
-                // don't skip first post
-                if (i === 0 && rect.top >= 75) {
-                    return 0
+                if (rect.top >= 100) {
+                    return i - 1
                 }
-                return i + 1; // data-position
+                return i
             }
         }
     },
 
     scrollToNextPost() {
-        let currentPostPosition = this.lookupCurrentPostPosition();
-        if (currentPostPosition !== undefined) {
-            let nextPost = document.querySelector(`[data-position="${currentPostPosition + 1}"]`);
-            nextPost.scrollIntoView({behavior: "smooth"});
+        let posts = this.loadPosts()
+        if (posts === undefined) {
+            return
         }
+        let currentPosition = this.lookupCurrentPosition(posts);
+        let nextPost = currentPosition < posts.length ? posts[currentPosition + 1] : posts[currentPosition];
+        nextPost.scrollIntoView({behavior: "smooth"});
     },
 
     scrollToPreviousPost() {
-        let currentPostPosition = this.lookupCurrentPostPosition();
-        if (currentPostPosition !== undefined && currentPostPosition > 1) {
-            let previousPost = document.querySelector(`[data-position="${currentPostPosition - 1}"]`);
-            previousPost.scrollIntoView({behavior: "smooth"});
+        let posts = this.loadPosts()
+        if (!posts) {
+            return
         }
+        let currentPosition = this.lookupCurrentPosition(posts);
+        let previousPost = currentPosition > 0 ? posts[currentPosition - 1] : posts[currentPosition];
+        previousPost.scrollIntoView({behavior: "smooth"});
     },
 
     likePost() {
-        let currentPostPosition = this.lookupCurrentPostPosition();
-        if (currentPostPosition !== undefined) {
-            let currentPost = document.querySelector(`[data-position="${currentPostPosition}"]`);
-            currentPost.querySelector('.like-button').click()
+        let posts = this.loadPosts()
+        if (!posts) {
+            return
         }
+        let currentPosition = this.lookupCurrentPosition(posts);
+        let currentPost = posts[currentPosition]
+        currentPost.querySelector('.like-button').click()
     },
 
     bookmarkPost() {
-        let currentPostPosition = this.lookupCurrentPostPosition();
-        if (currentPostPosition !== undefined) {
-            let currentPost = document.querySelector(`[data-position="${currentPostPosition}"]`);
-            currentPost.querySelector('.bookmark').click()
+        let posts = this.loadPosts()
+        if (!posts) {
+            return
         }
+        let currentPosition = this.lookupCurrentPosition(posts);
+        let currentPost = posts[currentPosition]
+        currentPost.querySelector('.bookmark').click()
     },
 
     openPost() {
-        let currentPostPosition = this.lookupCurrentPostPosition();
-        if (currentPostPosition !== undefined) {
-            let currentPost = document.querySelector(`[data-position="${currentPostPosition}"]`);
-            let url = currentPost.querySelector('a.content-link').href
-            window.open(url, '_blank').focus()
+        let posts = this.loadPosts()
+        if (!posts) {
+            return
         }
+        let currentPosition = this.lookupCurrentPosition(posts);
+        let currentPost = posts[currentPosition]
+        let url = currentPost.querySelector('a.content-link').href
+        window.open(url, '_blank').focus()
     }
 }
 
 const newDtf = {
-    lookupCurrentPost() {
+    loadPosts() {
         const posts = document.getElementsByClassName("content content--short");
         if (posts.length === 0) {
             return
         }
+        return posts
+    },
+
+    lookupCurrentPosition(posts) {
 
         for (let i = 0; i < posts.length; i++) {
             const post = posts[i];
             const rect = post.getBoundingClientRect();
             if (rect.top >= 0) {
-
-                // don't skip first post
-                if (i === 0 && rect.top >= 75) {
-                    return [post, true]
+                if (rect.top >= 100) {
+                    return i - 1
                 }
-                return [post, false]; // post object
+                return i
             }
         }
     },
 
     scrollToNextPost() {
-        const result = this.lookupCurrentPost();
-        if (result) {
-            let [current, isFirst] = result;
-            let nextPost;
-
-            if (isFirst === true) {
-                nextPost = current
-            } else {
-                nextPost = current.nextElementSibling;
-            }
-
-            while (nextPost) {
-                if (nextPost.classList.contains("content") && nextPost.classList.contains("content--short")) {
-                    nextPost.scrollIntoView({behavior: "smooth"});
-                    break;
-                } else {
-                    nextPost = nextPost.nextElementSibling;
-                }
-            }
+        let posts = this.loadPosts()
+        if (!posts) {
+            return
         }
+        let currentPosition = this.lookupCurrentPosition(posts);
+        let nextPost = currentPosition < posts.length - 1 ? posts[currentPosition + 1] : posts[currentPosition];
+        nextPost.scrollIntoView({behavior: "smooth"});
     },
 
 
     scrollToPreviousPost() {
-        const result = this.lookupCurrentPost();
-        if (result) {
-            let previousPost = result[0].previousElementSibling;
-            while (previousPost) {
-                if (previousPost.classList.contains("content") && previousPost.classList.contains("content--short")) {
-                    previousPost.scrollIntoView({behavior: "smooth"});
-                    break;
-                } else {
-                    previousPost = previousPost.previousElementSibling;
-                }
-            }
+        let posts = this.loadPosts()
+        if (!posts) {
+            return
         }
+        let currentPosition = this.lookupCurrentPosition(posts);
+        let previousPost = currentPosition > 0 ? posts[currentPosition - 1] : posts[currentPosition];
+        previousPost.scrollIntoView({behavior: "smooth"});
     },
 
     likePost() {
-        let result = this.lookupCurrentPost();
-        if (result) {
-            result[0].querySelector('button.like')?.click()
+        let posts = this.loadPosts()
+        if (!posts) {
+            return
         }
+        let currentPosition = this.lookupCurrentPosition(posts);
+        posts[currentPosition].querySelector('button.like')?.click()
     },
 
     bookmarkPost() {
-        let result = this.lookupCurrentPost();
-        if (result) {
-            result[0].querySelector('button.bookmark-button')?.click()
+        let posts = this.loadPosts()
+        if (!posts) {
+            return
         }
+        let currentPosition = this.lookupCurrentPosition(posts);
+        posts[currentPosition].querySelector('button.bookmark-button')?.click()
     },
 
     openPost() {
-        let result = this.lookupCurrentPost();
-        if (result) {
-            let url = result[0].querySelector('a.content__link').href
-            window.open(url, '_blank').focus()
+        let posts = this.loadPosts()
+        if (!posts) {
+            return
         }
-    },
+        let currentPosition = this.lookupCurrentPosition(posts);
+        let currentPost = posts[currentPosition]
+        let url = currentPost.querySelector('a.content__link').href
+        window.open(url, '_blank').focus()
+    }
+
 }
 
 function checkInInput() {
     return (
         document.activeElement.tagName === "INPUT" ||
         document.activeElement.tagName === "TEXTAREA" ||
-        document.activeElement.classList.contains('content_editable')
+        document.activeElement.classList.contains("content_editable") ||
+        document.activeElement.classList.contains("editor-content")
     )
 }
 
